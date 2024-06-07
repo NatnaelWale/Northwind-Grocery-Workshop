@@ -25,104 +25,97 @@ window.onload = () => {
 };
 
 function populateOptions() {
-    dropdownDisplay1.innerHTML = "";
-    if (onSearchByCategoryBtn.checked) {
-        console.log("am checked");
-        populateCategoriesOptions();
-    } else if (onDisplayAllGroceryBtn.checked) {
-        populateAllGroceries();
-    }
+  dropdownDisplay1.innerHTML = "";
+  if (onSearchByCategoryBtn.checked) {
+    populateCategoriesOptions();
+  } else if (onDisplayAllGroceryBtn.checked) {
+    populateAllGroceries();
+  }
 }
 
 function populateCategoriesOptions() {
-    let categoryApiUrl = "http://localhost:8081/api/categories";
-    
-    dropdownDisplay1.className = "d-block";
-    resultsDisplay.className = "d-none";
-    
-    fetch(categoryApiUrl)
+  let categoryApiUrl = "http://localhost:8081/api/categories";
+
+  dropdownDisplay1.className = "d-block";
+  resultsDisplay.className = "d-none";
+
+  fetch(categoryApiUrl)
     .then((response) => response.json())
     .then((data) => {
-        // console.log(data)
-        //     const selectCategory = document.createElement("select");
-        //     selectCategory.className = "text-center form form-control mt-5 custom-select1";
-        //     data.forEach(category => {
-            //     const selectCategoryOptions = document.createElement("option")
-            //     selectCategoryOptions.textContent = category.name;
-            //     selectCategoryOptions.value = category.categoryId;
-            //     selectCategory.appendChild(selectCategoryOptions);
-            // })
-            // dropdownDisplay1.appendChild(selectCategory);
-            const biggerCategoriesDiv = document.createElement("div");
-            biggerCategoriesDiv.className = "menu section";
-            const titleDiv = document.createElement("div");
-            titleDiv.className = "container section-title";
-            const title = document.createElement("h1");
-            title.textContent = "Our Categories";
-            titleDiv.appendChild(title);
-            biggerCategoriesDiv.appendChild(titleDiv);
-            
-            const categoriesDiv = document.createElement("div");
-            categoriesDiv.className = "container";
-            const categoriesUnorderedList = document.createElement("ul");
-            categoriesUnorderedList.className =
-            "nav nav-tabs d-flex justify-content-center";
-            categoriesUnorderedList.setAttribute("data-aos", "fade-up");
-            categoriesUnorderedList.setAttribute("data-aos-delay", "50");
-            data.forEach((category) => {
-                const categoryList = document.createElement("li");
-                categoryList.className = "nav-item";
-                const anchor = document.createElement("a");
-                anchor.className = "nav-link show";
-                anchor.setAttribute("data-bs-toggle", "tab");
-                anchor.setAttribute("data-bs-target", `#category-${category.name}`);
-                for (let image of images) {
-                    if (category.categoryId == image.categoryId) {
-                        const categoryImage = document.createElement("img");
-                        categoryImage.className = "iconImage";
-                        categoryImage.src = image.image;
-                        anchor.appendChild(categoryImage);
-                    }
-                }
-                
-                const listTitle = document.createElement("h4");
-                listTitle.textContent = category.name;
-                listTitle.className = "text-center mt-2";
-                anchor.appendChild(listTitle);
-                categoryList.appendChild(anchor);
-                categoriesUnorderedList.appendChild(categoryList);
-                
-                
-                const radioButton = document.createElement("input");
-                radioButton.id = category.categoryId;
-                radioButton.className = "radioCategory"
-                radioButton.type = "radio";
-                const radioLabel = document.createElement("label");
-                radioLabel.for = category.categoryId;
-                radioButton.appendChild(radioLabel);
-                categoryList.appendChild(radioButton);
-                
-                
-                
+      
+       //==== A way to display the category using a dropdown =-====//
+
+      //     const selectCategory = document.createElement("select");
+      //     selectCategory.className = "text-center form form-control mt-5 custom-select1";
+      //     data.forEach(category => {
+      //     const selectCategoryOptions = document.createElement("option")
+      //     selectCategoryOptions.textContent = category.name;
+      //     selectCategoryOptions.value = category.categoryId;
+      //     selectCategory.appendChild(selectCategoryOptions);
+      // })
+      // dropdownDisplay1.appendChild(selectCategory);
+
+
+      //=== A more fancy way to display the categories using lists with images====//
+
+      const biggerCategoriesDiv = document.createElement("div");
+      biggerCategoriesDiv.className = "menu section";
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "container section-title";
+      const title = document.createElement("h1");
+      title.textContent = "Our Categories";
+      titleDiv.appendChild(title);
+      biggerCategoriesDiv.appendChild(titleDiv);
+
+      const categoriesDiv = document.createElement("div");
+      categoriesDiv.className = "container";
+      const categoriesUnorderedList = document.createElement("ul");
+      categoriesUnorderedList.className =
+        "nav nav-tabs d-flex justify-content-center";
+      categoriesUnorderedList.setAttribute("data-aos", "fade-up");
+      categoriesUnorderedList.setAttribute("data-aos-delay", "50");
+      data.forEach((category) => {
+        const categoryList = document.createElement("li");
+        categoryList.id = category.categoryId;
+        categoryList.className = "nav-item";
+        const anchor = document.createElement("a");
+        anchor.className = "nav-link show";
+        anchor.setAttribute("data-bs-toggle", "tab");
+        anchor.setAttribute("data-bs-target", `#category-${category.name}`);
+        for (let image of images) {
+          if (category.categoryId == image.categoryId) {
+            const categoryImage = document.createElement("img");
+            categoryImage.className = "iconImage";
+            categoryImage.src = image.image;
+            anchor.appendChild(categoryImage);
+          }
+        }
+        const listTitle = document.createElement("h4");
+        listTitle.textContent = category.name;
+        listTitle.className = "text-center mt-2";
+        anchor.appendChild(listTitle);
+        categoryList.appendChild(anchor);
+        categoriesUnorderedList.appendChild(categoryList);
+      });
+      biggerCategoriesDiv.appendChild(categoriesUnorderedList);
+      dropdownDisplay1.appendChild(biggerCategoriesDiv);
+
+      var lists = document.querySelectorAll("ul li");
+      // console.log(lists)
+      lists.forEach(function (list) {
+        list.onclick = function () {
+          location.href = "productsSearch.html#resultsDisplay";
+          let selectedProductId = this.id;
+          // console.log(selectedProductId);
+          let specificCategoryApi = `http://localhost:8081/api/products/bycategory/${selectedProductId}`;
+          fetch(specificCategoryApi)
+            .then((response) => response.json())
+            .then((data) => {
+              displayData(data);
             });
-            biggerCategoriesDiv.appendChild(categoriesUnorderedList);
-            dropdownDisplay1.appendChild(biggerCategoriesDiv);
-        });
-    }
-
-function populateCategorisedData() {
-    let allGroceriesApiUrl = "http://localhost:8081/api/products";
-
-    fetch(allGroceriesApiUrl)
-       .then((response) => response.json())
-       .then((data) => {
-           if(radioButton.checked){
-          const selectedData =  data.filter(data => data.categoryId == radioButton.id)
-          console.log(selectedData)
-       } else {
-           console.log('nothing is cliked')
-       }
-       })
+        };
+      });
+    });
 }
 
 function populateAllGroceries() {

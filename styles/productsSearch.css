@@ -63,9 +63,15 @@
     font-weight: 900;
   }
 
+  .iconImage {
+    width: 80%;
+  }
+
   .custom-select1 {
+    width: 50%;
+    margin-left: 25%;
     position: relative;
-    width: 400px;
+    width: 520px;
     max-width: 100%;
     font-size: 1.15rem;
     color: #000;
